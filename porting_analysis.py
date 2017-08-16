@@ -3,7 +3,7 @@ import subprocess
 import re	# Regular Expression
 import abc	# Abstruct Base Class
 
-class CommitWithID():
+class CommitWithId():
 	patchid = b''
 
 	def __init__(self, commit):
@@ -75,7 +75,7 @@ class PortingAnalysis:
 			if (len(c.parents) > 1):
 				continue  # skip merge commits
 
-			c_id = CommitWithID(c)
+			c_id = CommitWithId(c)
 
 			keep = True
 			for f in filters:
