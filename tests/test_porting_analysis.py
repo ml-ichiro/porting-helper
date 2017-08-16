@@ -52,6 +52,12 @@ class TestPortingAnalysis(TestCase):
 		commits = l[0]
 		self.assertEqual(len(commits), 3)
 
+	def test_commits_paths(self):
+		commits = self.target.commits(rev='dev_b')[0]
+		self.assertEqual(len(commits), 7) # all to the beginning
+		commits = self.target.commits(rev='dev_b', paths=['b.txt'])[0]
+		self.assertEqual(len(commits), 2) # only about 'b.txt'
+
 	def test_filter_revert(self):
 		l = self.target.commits(filters=[RevertFilter()])
 		self.assertEqual(len(l), 2)
