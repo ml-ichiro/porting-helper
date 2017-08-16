@@ -80,7 +80,7 @@ class PatchIdFilter(Filter):
 
 		return l
 
-class PortingAnalysis:
+class PortingHelper:
 	repository = ''
 
 	def __init__(self, repo='.'):

@@ -4,9 +4,9 @@ from git import Repo
 from os import path
 import subprocess
 
-from porting_analysis import PortingAnalysis, RevertFilter, PatchIdFilter
+from porting_helper import PortingHelper, RevertFilter, PatchIdFilter
 
-class TestPortingAnalysis(TestCase):
+class TestPortingHelper(TestCase):
 	repo_path = './tests/foo'
 
 	@classmethod
@@ -20,7 +20,7 @@ class TestPortingAnalysis(TestCase):
 		pass
 
 	def setUp(self):
-		self.target = PortingAnalysis(TestPortingAnalysis.repo_path)
+		self.target = PortingHelper(TestPortingHelper.repo_path)
 
 	def tearDown(self):
 		pass
@@ -28,7 +28,7 @@ class TestPortingAnalysis(TestCase):
 	def test_dir(self):
 		self.assertEqual(
 				self.target.dir(),
-				path.abspath(TestPortingAnalysis.repo_path))
+				path.abspath(TestPortingHelper.repo_path))
 
 	def test_commits(self):
 		l = self.target.commits()
