@@ -33,33 +33,33 @@ class TestPortingAnalysis(TestCase):
 	def test_commits(self):
 		l = self.target.commits()
 		self.assertEqual(len(l), 1)
-		commits = l[0];
+		commits = l[0]
 		self.assertEqual(len(commits), 5)
 		print('>>>> commits')
 		for c in commits:
-			print(c.summary);
+			print(c.summary)
 		print('<<<<')
 
 	def test_commits_partial(self):
 		l = self.target.commits(rev='HEAD~2..HEAD')
 		self.assertEqual(len(l), 1)
-		commits = l[0];
+		commits = l[0]
 		self.assertEqual(len(commits), 2)
 
 	def test_commits_branch(self):
 		l = self.target.commits(rev='dev_b~3..dev_b')
 		self.assertEqual(len(l), 1)
-		commits = l[0];
+		commits = l[0]
 		self.assertEqual(len(commits), 3)
 
 	def test_filter_revert(self):
 		l = self.target.commits(filters=[RevertFilter()])
 		self.assertEqual(len(l), 2)
-		reverts = l[1];
+		reverts = l[1]
 		self.assertEqual(len(reverts), 1)
-		print('>>>> commits')
+		print('>>>> reverts')
 		for c in reverts:
-			print(c[0], ' ', c[1], ' ', c[2]);
+			print(c[0], ' ', c[1], ' ', c[2])
 		print('<<<<')
 		self.assertEqual(reverts[0][2], True)
 
