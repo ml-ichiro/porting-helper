@@ -48,4 +48,9 @@ class TestPortingAnalysis(TestCase):
 		self.assertEqual(len(r), 1)
 		self.assertFalse(r[0][2])
 
+	def test_commits_branch(self):
+		l, r = self.target.commits(rev='dev_b~3..dev_b')
+		self.assertEqual(len(l), 3)
+		self.assertEqual(len(r), 0)
+
 # vim: set tabstop=3 shiftwidth=3 :
