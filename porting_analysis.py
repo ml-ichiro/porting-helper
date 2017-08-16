@@ -1,6 +1,27 @@
-from git import Repo
+from git import Repo, Commit
+import subprocess
 import re	# Regular Expression
 import abc	# Abstruct Base Class
+
+class CommitWithID():
+	patchid = b''
+
+	def __init__(self, commit):
+		self.commit = commit
+		self.patchid = self.set_patchid(commit.hexsha)
+
+	def set_patchid(self, hexsha):
+		command = 'git show ' + hexsha + '| git patch-id'
+		outstr = subprocess.Popen(
+				command,
+				cwd=self.commit.repo.working_dir,
+				stdout=subprocess.PIPE,
+				shell=True
+				).communicate()[0]
+		return outstr.split()[0]
+
+	def __getattr__(self, name):
+		return getattr(self.commit, name)
 
 class Filter(metaclass=abc.ABCMeta):
 	@abc.abstractmethod
@@ -54,12 +75,14 @@ class PortingAnalysis:
 			if (len(c.parents) > 1):
 				continue  # skip merge commits
 
+			c_id = CommitWithID(c)
+
 			keep = True
 			for f in filters:
-				keep &= f.action(c)
+				keep &= f.action(c_id)
 
 			if (keep):
-				commit_list.append(c)
+				commit_list.append(c_id)
 
 		results = [commit_list]
 		for f in filters:

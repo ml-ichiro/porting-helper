@@ -37,7 +37,7 @@ class TestPortingAnalysis(TestCase):
 		self.assertEqual(len(commits), 5)
 		print('>>>> commits')
 		for c in commits:
-			print(c.summary)
+			print(c.summary, c.patchid)
 		print('<<<<')
 
 	def test_commits_partial(self):
