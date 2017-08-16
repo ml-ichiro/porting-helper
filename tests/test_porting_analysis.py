@@ -30,15 +30,17 @@ class TestPortingAnalysis(TestCase):
 
 	def test_commits(self):
 		l, r = self.target.commits()
-		self.assertEqual(len(l), 4)
+		self.assertEqual(len(l), 5)
+		self.assertEqual(l[0][1], '0')
 		self.assertEqual(len(r), 1)
 		self.assertTrue(r[0][2])
 		print('>>>> commits')
 		for i in l:
-			print(i.summary);
+			print(i[0].summary);
 		print('<<<<')
-		print('==== reverts')
+		print('>>>> reverts')
 		print(r[0])
+		print('<<<<')
 
 	def test_commits_partial(self):
 		l, r = self.target.commits(rev='HEAD~2..HEAD')

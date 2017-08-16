@@ -28,14 +28,15 @@ class PortingAnalysis:
 
 			return matched.group(1)
 
-		commit_list = []  # list of git.Commit
+		commit_list = []  # list of list(git.Commit, patchid)
 		revert_list = []  # list of list(revert, original, found)
 
 		for c in self.repository.iter_commits(rev=rev, paths=paths):
 			if (len(c.parents) > 1):
 				continue  # skip merge commits
 
-			commit_list.append(c)
+			id = '0'
+			commit_list.append([c, id])
 
 			if (c.summary.startswith('Revert "')):
 				victim = get_victim(c.message)
