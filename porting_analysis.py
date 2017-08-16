@@ -59,6 +59,27 @@ class RevertFilter(Filter):
 	def get_results(self):
 		return self.revert_list
 
+class PatchIdFilter(Filter):
+	patchid_set = set();
+
+	def __init__(self, commits):
+		for c in commits:
+			self.patchid_set.add(c.patchid)
+
+	def action(self, commit):
+		if (commit.patchid in self.patchid_set):
+			return False
+
+		return True
+
+	def get_results(self):
+		l = []
+
+		for i in self.patchid_set:
+			l.append(i)
+
+		return l
+
 class PortingAnalysis:
 	repository = ''
 

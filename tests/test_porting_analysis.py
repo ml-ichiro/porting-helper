@@ -4,7 +4,7 @@ from git import Repo
 from os import path
 import subprocess
 
-from porting_analysis import PortingAnalysis, RevertFilter
+from porting_analysis import PortingAnalysis, RevertFilter, PatchIdFilter
 
 class TestPortingAnalysis(TestCase):
 	repo_path = './tests/foo'
@@ -62,5 +62,22 @@ class TestPortingAnalysis(TestCase):
 			print(c[0], ' ', c[1], ' ', c[2])
 		print('<<<<')
 		self.assertEqual(reverts[0][2], True)
+
+	def test_filter_patchid(self):
+		l = self.target.commits(rev='dev_b~3..dev_b')
+		pif = PatchIdFilter(l[0])
+		ids = pif.get_results()
+		self.assertEqual(len(ids), 3)
+		print('>>>> patch ids')
+		for i in ids:
+			print(i)
+		print('<<<<')
+
+		l = self.target.commits(filters=[pif])
+		self.assertEqual(len(l), 2)
+		commits = l[0]
+		ids = l[1]
+		self.assertEqual(len(ids), 3)
+		self.assertEqual(len(commits), 4) # One less than all
 
 # vim: set tabstop=3 shiftwidth=3 :
