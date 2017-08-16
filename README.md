@@ -1,3 +1,3 @@
-== Porting Helper
+# Porting Helper
 
-moved to git@github.com:ml-ichiro/linux-gen4.git
+moved to https://github.com/ml-ichiro/porting-helper
