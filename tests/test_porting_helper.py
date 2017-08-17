@@ -86,4 +86,21 @@ class TestPortingHelper(TestCase):
 		self.assertEqual(len(ids), 3)
 		self.assertEqual(len(commits), 4) # One less than all
 
+	def test_filter_summary(self):
+		l = self.target.commits(rev='dev_b~3..dev_b')
+		pif = SummaryFilter(l[0])
+		ids = pif.get_results()
+		self.assertEqual(len(ids), 3)
+		print('>>>> summary lines')
+		for i in ids:
+			print(i)
+		print('<<<<')
+
+		l = self.target.commits(filters=[pif])
+		self.assertEqual(len(l), 2)
+		commits = l[0]
+		ids = l[1]
+		self.assertEqual(len(ids), 3)
+		self.assertEqual(len(commits), 4) # One less than all
+
 # vim: set tabstop=3 shiftwidth=3 :

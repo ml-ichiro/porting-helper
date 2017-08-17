@@ -80,6 +80,27 @@ class PatchIdFilter(Filter):
 
 		return l
 
+class SummaryFilter(Filter):
+	summary_set = set();
+
+	def __init__(self, commits):
+		for c in commits:
+			self.summary_set.add(c.summary)
+
+	def action(self, commit):
+		if (commit.summary in self.summary_set):
+			return False
+
+		return True
+
+	def get_results(self):
+		l = []
+
+		for i in self.summary_set:
+			l.append(i)
+
+		return l
+
 class PortingHelper:
 	repository = ''
 
