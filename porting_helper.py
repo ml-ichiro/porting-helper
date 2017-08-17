@@ -139,10 +139,6 @@ class PortingHelper:
             if (keep):
                 commit_list.append(c_id)
 
-        results = [commit_list]
-        for f in filters:
-            results.append(f.get_results())
-
-        return results
+        return commit_list
 
 # vim: set shiftwidth=4 tabstop=99 :
