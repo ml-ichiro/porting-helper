@@ -8,6 +8,7 @@ from porting_helper import *
 
 class TestPortingHelper(TestCase):
 	repo_path = './tests/foo'
+	message_buf = []
 
 	@classmethod
 	def setUpClass(klass):
@@ -16,6 +17,9 @@ class TestPortingHelper(TestCase):
 
 	@classmethod
 	def tearDownClass(klass):
+		print()
+		for l in TestPortingHelper.message_buf:
+			print(l)
 		subprocess.call(['rm', '-rf', './tests/foo'])
 		pass
 
@@ -35,10 +39,10 @@ class TestPortingHelper(TestCase):
 		self.assertEqual(len(l), 1)
 		commits = l[0]
 		self.assertEqual(len(commits), 5)
-		print('>>>> commits')
+		self.message_buf.append('>>>> commits')
 		for c in commits:
-			print(c.summary, c.patchid)
-		print('<<<<')
+			self.message_buf.append('%s %s' % (c.patchid, c.summary))
+		self.message_buf.append('<<<<')
 
 	def test_commits_partial(self):
 		l = self.target.commits(rev='HEAD~2..HEAD')
@@ -63,10 +67,10 @@ class TestPortingHelper(TestCase):
 		self.assertEqual(len(l), 2)
 		reverts = l[1]
 		self.assertEqual(len(reverts), 1)
-		print('>>>> reverts')
+		self.message_buf.append('>>>> reverts')
 		for c in reverts:
-			print(c[0], ' ', c[1], ' ', c[2])
-		print('<<<<')
+			self.message_buf.append('%s %s %s' % tuple(c))
+		self.message_buf.append('<<<<')
 		self.assertEqual(reverts[0][2], True)
 
 	def test_filter_patchid(self):
@@ -74,10 +78,10 @@ class TestPortingHelper(TestCase):
 		pif = PatchIdFilter(l[0])
 		ids = pif.get_results()
 		self.assertEqual(len(ids), 3)
-		print('>>>> patch ids')
+		self.message_buf.append('>>>> patch ids')
 		for i in ids:
-			print(i)
-		print('<<<<')
+			self.message_buf.append(i)
+		self.message_buf.append('<<<<')
 
 		l = self.target.commits(filters=[pif])
 		self.assertEqual(len(l), 2)
@@ -91,10 +95,10 @@ class TestPortingHelper(TestCase):
 		pif = SummaryFilter(l[0])
 		ids = pif.get_results()
 		self.assertEqual(len(ids), 3)
-		print('>>>> summary lines')
+		self.message_buf.append('>>>> summary lines')
 		for i in ids:
-			print(i)
-		print('<<<<')
+			self.message_buf.append(i)
+		self.message_buf.append('<<<<')
 
 		l = self.target.commits(filters=[pif])
 		self.assertEqual(len(l), 2)
