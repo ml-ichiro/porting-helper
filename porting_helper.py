@@ -5,6 +5,7 @@ import abc   # Abstruct Base Class
 
 __all__ = [
     'PortingHelper',
+    'Filter',
     'RevertFilter',
     'PatchIdFilter',
     'SummaryFilter',
