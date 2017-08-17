@@ -124,7 +124,7 @@ class PortingHelper:
         return self.repository.working_dir
 
     def commits(self, rev='HEAD', paths='.', filters=[]):
-        commit_list = []  # list of list(git.Commit, patchid)
+        commit_list = []  # list of CommitWithId
 
         for c in self.repository.iter_commits(rev=rev, paths=paths):
             if (len(c.parents) > 1):
