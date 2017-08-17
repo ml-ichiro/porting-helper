@@ -4,7 +4,7 @@ from git import Repo
 from os import path
 import subprocess
 
-from porting_helper import PortingHelper, RevertFilter, PatchIdFilter
+from porting_helper import *
 
 class TestPortingHelper(TestCase):
 	repo_path = './tests/foo'
