@@ -123,7 +123,7 @@ class PortingHelper:
     def dir(self):
         return self.repository.working_dir
 
-    def commits(self, rev='HEAD', paths='.', filters=[]):
+    def commits(self, rev='HEAD', paths='', filters=[]):
         commit_list = []  # list of CommitWithId
 
         for c in self.repository.iter_commits(rev=rev, paths=paths):
