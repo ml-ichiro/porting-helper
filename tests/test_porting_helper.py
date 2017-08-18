@@ -52,11 +52,27 @@ class TestPortingHelper(TestCase):
         commits = self.target.commits(rev='dev_b~3..dev_b')
         self.assertEqual(len(commits), 3)
 
-    def test_commits_paths(self):
+    def test_commits_paths_file(self):
         commits = self.target.commits(rev='dev_b')
         self.assertEqual(len(commits), 7)  # all to the beginning
         commits = self.target.commits(rev='dev_b', paths=['b.txt'])
         self.assertEqual(len(commits), 2)  # only about 'b.txt'
+
+    def test_commits_paths_none(self):
+        commits = self.target.commits(rev='dev_b', paths=None)
+        self.assertEqual(len(commits), 7)  # All
+
+    def test_commits_paths_dot(self):
+        commits = self.target.commits(rev='dev_b', paths=['.'])
+        self.assertEqual(len(commits), 7)  # only about 'b.txt'
+
+    def test_commits_paths_dot2(self):
+        commits = self.target.commits(rev='dev_b', paths='.')
+        self.assertEqual(len(commits), 7)  # only about 'b.txt'
+
+    def test_commits_paths_nullstr(self):
+        commits = self.target.commits(rev='dev_b', paths='')
+        self.assertEqual(len(commits), 7)  # only about 'b.txt'
 
     def test_filter_revert(self):
         f = RevertFilter()
