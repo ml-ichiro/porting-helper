@@ -1,3 +1,5 @@
+from typing import List, Any
+
 from git import Repo, Commit
 import subprocess
 import re    # Regular Expression
@@ -34,11 +36,11 @@ class CommitWithId():
 
 class Filter(metaclass=abc.ABCMeta):
     @abc.abstractmethod
-    def action(self, commit):
+    def action(self, commit: CommitWithId) -> bool:
         return True
 
     @abc.abstractmethod
-    def get_results(self):
+    def get_results(self) -> List[Any]:
         return []
 
 
@@ -120,10 +122,11 @@ class PortingHelper:
     def __init__(self, repo='.'):
         self.repository = Repo(repo)
 
-    def dir(self):
+    def dir(self) -> str:
         return self.repository.working_dir
 
-    def commits(self, rev='HEAD', paths='', filters=[]):
+    def commits(self, rev: str = 'HEAD', paths: str = '',
+                filters: List[Filter] = []) -> List[CommitWithId]:
         commit_list = []  # list of CommitWithId
 
         for c in self.repository.iter_commits(rev=rev, paths=paths):
