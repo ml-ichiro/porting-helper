@@ -107,14 +107,13 @@ class PatchIdFilter(Filter):
     Drop commit of a series if the patch-id is found in
     a set of IDs created from another series
     '''
-    patchid_set = set()
+    patchid_set = None
 
     def __init__(self, commits: List[CommitWithId]):
         '''
         :param commits: List of gitpython Commit instances
         '''
-        for c in commits:
-            self.patchid_set.add(c.patchid)
+        self.patchid_set = set([c.patchid for c in commits])
 
     def action(self, commit):
         '''
@@ -130,12 +129,7 @@ class PatchIdFilter(Filter):
         '''
         :return: List of patch-ids, in random order
         '''
-        l = []
-
-        for i in self.patchid_set:
-            l.append(i)
-
-        return l
+        return [i for i in self.patchid_set]
 
 
 class SummaryFilter(Filter):
@@ -143,14 +137,13 @@ class SummaryFilter(Filter):
     Drop commit of a series if the sammary line is same as
     a commit in another series
     '''
-    summary_set = set()
+    summary_set = None
 
     def __init__(self, commits: List[CommitWithId]):
         '''
         :param commits: List of gitpython Commit instances
         '''
-        for c in commits:
-            self.summary_set.add(c.summary)
+        self.summary_set = set([c.summary for c in commits])
 
     def action(self, commit):
         '''
@@ -166,12 +159,7 @@ class SummaryFilter(Filter):
         '''
         :return: List of summary lines, in random order
         '''
-        l = []
-
-        for i in self.summary_set:
-            l.append(i)
-
-        return l
+        return [i for i in self.summary_set]
 
 
 class PortingHelper:
