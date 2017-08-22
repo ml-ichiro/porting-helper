@@ -44,6 +44,12 @@ class TestPortingHelper(TestCase):
             self.message_buf.append('%s %s' % (c.patchid, c.summary))
         self.message_buf.append('<<<<')
 
+    def test_commits_repeat(self):
+        commits = self.target.commits()
+        self.assertEqual(len(commits), 5)
+        commits = self.target.commits()
+        self.assertEqual(len(commits), 5)
+
     def test_commits_partial(self):
         commits = self.target.commits(rev='HEAD~2..HEAD')
         self.assertEqual(len(commits), 2)
@@ -99,6 +105,13 @@ class TestPortingHelper(TestCase):
 
         commits = self.target.commits(filters=[pif])
         self.assertEqual(len(commits), 4)  # One less than all
+
+    def test_filter_patchid_repeat(self):
+        commits = self.target.commits(rev='dev_b~3..dev_b')
+        pif = PatchIdFilter(commits)
+        self.assertEqual(len(pif.get_results()), 3)
+        pif = PatchIdFilter(commits)
+        self.assertEqual(len(pif.get_results()), 3)
 
     def test_filter_summary(self):
         commits = self.target.commits(rev='dev_b~3..dev_b')
