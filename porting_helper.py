@@ -1,4 +1,4 @@
-from typing import List, Any
+from typing import List, Any, Union
 
 from git import Repo, Commit
 import subprocess
@@ -125,7 +125,7 @@ class PortingHelper:
     def dir(self) -> str:
         return self.repository.working_dir
 
-    def commits(self, rev: str = 'HEAD', paths: str = '',
+    def commits(self, rev: str = 'HEAD', paths: Union[str, List[str]] = '',
                 filters: List[Filter] = []) -> List[CommitWithId]:
         commit_list = []  # list of CommitWithId
 
