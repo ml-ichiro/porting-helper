@@ -88,6 +88,7 @@ class RevertFilter(Filter):
         for r in self.revert_list:
             if (commit.hexsha.startswith(r[1])):
                 r[2] = True
+                break
 
         return True
 
@@ -210,6 +211,8 @@ class PortingHelper:
             keep = True
             for f in filters:
                 keep &= f.action(c_id)
+                if (not keep):
+                    break
 
             if (keep):
                 commit_list.append(c_id)
