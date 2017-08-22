@@ -75,7 +75,7 @@ class RevertFilter(Filter):
 class PatchIdFilter(Filter):
     patchid_set = set()
 
-    def __init__(self, commits):
+    def __init__(self, commits: List[CommitWithId]):
         for c in commits:
             self.patchid_set.add(c.patchid)
 
@@ -97,7 +97,7 @@ class PatchIdFilter(Filter):
 class SummaryFilter(Filter):
     summary_set = set()
 
-    def __init__(self, commits):
+    def __init__(self, commits: List[CommitWithId]):
         for c in commits:
             self.summary_set.add(c.summary)
 
@@ -119,7 +119,7 @@ class SummaryFilter(Filter):
 class PortingHelper:
     repository = ''
 
-    def __init__(self, repo='.'):
+    def __init__(self, repo: str = '.'):
         self.repository = Repo(repo)
 
     def dir(self) -> str:
