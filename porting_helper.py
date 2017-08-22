@@ -1,3 +1,8 @@
+'''
+Provides PortingHelper class and filtering classes
+to get list of commits in user specified criteria.
+'''
+
 from typing import List, Any, Union
 
 from git import Repo, Commit
@@ -35,16 +40,30 @@ class CommitWithId():
 
 
 class Filter(metaclass=abc.ABCMeta):
+    '''
+    Abstract class of commit filters
+    '''
+
     @abc.abstractmethod
     def action(self, commit: CommitWithId) -> bool:
+        '''
+        :param commit: CommitWithId instance, almost same as gitpython's Commit
+        :return: True to keep the commit, False to drop it
+        '''
         return True
 
     @abc.abstractmethod
     def get_results(self) -> List[Any]:
+        '''
+        :return: Filter's internal array (contents varies by Filters)
+        '''
         return []
 
 
 class RevertFilter(Filter):
+    '''
+    Find revert pairs
+    '''
     revert_list = []
     revert_commit_expr = re.compile(
             "This reverts\n? '?commit ([0-9a-f]*)", re.MULTILINE)
@@ -58,6 +77,10 @@ class RevertFilter(Filter):
         return matched.group(1)
 
     def action(self, commit):
+        '''
+        :param commit: CommitWithId instance, almost same as gitpython's Commit
+        :return: True (this filter doesn't drop any commit)
+        '''
         if (commit.summary.startswith('Revert "')):
             reverted = self.get_reverted(commit.message)
             self.revert_list.append([commit.hexsha, reverted, False])
@@ -69,23 +92,43 @@ class RevertFilter(Filter):
         return True
 
     def get_results(self):
+        '''
+        :return: List of triplet,
+            (revert hash, reverted hash, "is included" flag)
+            The flag "is included" is True when the reverted commit is
+            found in the examined series.
+        '''
         return self.revert_list
 
 
 class PatchIdFilter(Filter):
+    '''
+    Drop commit of a series if the patch-id is found in
+    a set of IDs created from another series
+    '''
     patchid_set = set()
 
     def __init__(self, commits: List[CommitWithId]):
+        '''
+        :param commits: List of gitpython Commit instances
+        '''
         for c in commits:
             self.patchid_set.add(c.patchid)
 
     def action(self, commit):
+        '''
+        :param commit: CommitWithId instance, almost same as gitpython's Commit
+        :return: False if given patch-id is found in the set
+        '''
         if (commit.patchid in self.patchid_set):
             return False
 
         return True
 
     def get_results(self):
+        '''
+        :return: List of patch-ids, in random order
+        '''
         l = []
 
         for i in self.patchid_set:
@@ -95,19 +138,33 @@ class PatchIdFilter(Filter):
 
 
 class SummaryFilter(Filter):
+    '''
+    Drop commit of a series if the sammary line is same as
+    a commit in another series
+    '''
     summary_set = set()
 
     def __init__(self, commits: List[CommitWithId]):
+        '''
+        :param commits: List of gitpython Commit instances
+        '''
         for c in commits:
             self.summary_set.add(c.summary)
 
     def action(self, commit):
+        '''
+        :param commit: CommitWithId instance, almost same as gitpython's Commit
+        :return: False if given summary line is found in the set
+        '''
         if (commit.summary in self.summary_set):
             return False
 
         return True
 
     def get_results(self):
+        '''
+        :return: List of summary lines, in random order
+        '''
         l = []
 
         for i in self.summary_set:
@@ -117,16 +174,31 @@ class SummaryFilter(Filter):
 
 
 class PortingHelper:
+    '''
+    Helper class to get filtered commit list from gitpython.Repo
+    '''
     repository = ''
 
     def __init__(self, repo: str = '.'):
+        '''
+        :param repo: Git repository path
+        '''
         self.repository = Repo(repo)
 
     def dir(self) -> str:
+        '''
+        :return: Current Git repository path
+        '''
         return self.repository.working_dir
 
     def commits(self, rev: str = 'HEAD', paths: Union[str, List[str]] = '',
                 filters: List[Filter] = []) -> List[CommitWithId]:
+        '''
+        :param rev: Git revision selection string, typically a range of commits
+        :param paths: Target dir/file path or list of paths
+        :param filters: List of Filter instances
+        :return: List of commits in reverse chronological order
+        '''
         commit_list = []  # list of CommitWithId
 
         for c in self.repository.iter_commits(rev=rev, paths=paths):
