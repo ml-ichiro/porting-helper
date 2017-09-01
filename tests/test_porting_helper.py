@@ -80,6 +80,25 @@ class TestPortingHelper(TestCase):
         commits = self.target.commits(rev='dev_b', paths='')
         self.assertEqual(len(commits), 7)  # only about 'b.txt'
 
+    def test_commits_from_hashes(self):
+        h = []
+        with open('./tests/hash.txt') as f:
+            for l in f:
+                h.append(l.strip())
+        commits = self.target.commits_from_hashes(hashes=h)
+        self.assertEqual(len(commits), 2)
+        self.assertEqual(commits[0].summary, 'jane')
+        self.assertEqual(commits[1].summary, 'Add Jane\'s family name')
+
+    def test_commits_from_file_wronghash(self):
+        h = []
+        with open('./tests/hash_wrong.txt') as f:
+            for l in f:
+                h.append(l.strip())
+        commits = self.target.commits_from_hashes(hashes=h)
+        self.assertEqual(len(commits), 1)
+        self.assertEqual(commits[0].summary, 'jane')
+
     def test_filter_revert(self):
         f = RevertFilter()
         commits = self.target.commits(filters=[f])

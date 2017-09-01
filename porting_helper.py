@@ -6,6 +6,7 @@ to get list of commits in user specified criteria.
 from typing import List, Any, Union
 
 from git import Repo, Commit
+from gitdb.exc import BadName
 import subprocess
 import re    # Regular Expression
 import abc   # Abstruct Base Class
@@ -204,6 +205,26 @@ class PortingHelper:
 
             if (keep):
                 commit_list.append(c_id)
+
+        return commit_list
+
+    def commits_from_hashes(self, hashes: List[str] = []) -> List[CommitWithId]:
+        '''
+        :param hashes: List of Git commit IDs
+        '''
+        commit_list = []  # list of CommitWithId
+
+        for h in hashes:
+            try:
+                c = self.repository.commit(h)
+            except BadName as e:
+                continue
+
+            if (len(c.parents) > 1):
+                continue
+
+            c_id = CommitWithId(c)
+            commit_list.append(c_id)
 
         return commit_list
 
