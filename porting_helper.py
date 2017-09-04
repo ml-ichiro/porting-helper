@@ -145,12 +145,14 @@ class SummaryFilter(Filter):
     a commit in another series
     '''
     summary_set = None
+    summary_list = []
 
     def __init__(self, commits: List[CommitWithId]):
         '''
         :param commits: List of gitpython Commit instances
         '''
         self.summary_set = set([c.summary for c in commits])
+        self.summary_list = [[c] for c in commits]  # List of length-1 lists
 
     def action(self, commit):
         '''
@@ -158,15 +160,19 @@ class SummaryFilter(Filter):
         :return: False if given summary line is found in the set
         '''
         if (commit.summary in self.summary_set):
+            for item in self.summary_list:
+                if item[0].summary == commit.summary:
+                    item.append(commit.hexsha)
+                    break
             return False
 
         return True
 
     def get_results(self):
         '''
-        :return: List of summary lines, in random order
+        :return: List of summary lines
         '''
-        return [i for i in self.summary_set]
+        return self.summary_list
 
 
 class PortingHelper:

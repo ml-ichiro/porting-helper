@@ -144,13 +144,20 @@ class TestPortingHelper(TestCase):
         f = SummaryFilter(commits)
         ids = f.get_results()
         self.assertEqual(len(ids), 3)
-
-        self.message_buf.append('>>>> summary lines')
-        for i in ids:
-            self.message_buf.append(i)
-        self.message_buf.append('<<<<')
+        [self.assertEqual(len(i), 1) for i in ids]
 
         commits = self.target.commits(filters=[f])
         self.assertEqual(len(commits), 4)  # One less than all
+        ids = f.get_results()
+        self.assertEqual(len(ids), 3)
+        self.assertEqual(len(ids[0]), 1)
+        self.assertEqual(len(ids[1]), 2)  # A match with "Add Jane's family name"
+
+        self.message_buf.append('>>>> summary lines')
+        for i in ids:
+            self.message_buf.append(i[0].summary)
+            if len(i) > 1:
+                self.message_buf.append('-> ' + i[1])
+        self.message_buf.append('<<<<')
 
 # vim: set shiftwidth=4 tabstop=99 :
