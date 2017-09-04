@@ -109,12 +109,14 @@ class PatchIdFilter(Filter):
     a set of IDs created from another series
     '''
     patchid_set = None
+    patchid_list = []
 
     def __init__(self, commits: List[CommitWithId]):
         '''
         :param commits: List of gitpython Commit instances
         '''
         self.patchid_set = set([c.patchid for c in commits])
+        self.patchid_list = [[c] for c in commits]
 
     def action(self, commit):
         '''
@@ -122,15 +124,19 @@ class PatchIdFilter(Filter):
         :return: False if given patch-id is found in the set
         '''
         if (commit.patchid in self.patchid_set):
+            for item in self.patchid_list:
+                if item[0].patchid == commit.patchid:
+                    item.append(commit.hexsha)
+                    break
             return False
 
         return True
 
     def get_results(self):
         '''
-        :return: List of patch-ids, in random order
+        :return: List of patch-ids
         '''
-        return [i for i in self.patchid_set]
+        return self.patchid_list
 
 
 class SummaryFilter(Filter):

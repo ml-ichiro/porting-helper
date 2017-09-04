@@ -116,14 +116,21 @@ class TestPortingHelper(TestCase):
         pif = PatchIdFilter(commits)
         ids = pif.get_results()
         self.assertEqual(len(ids), 3)
-
-        self.message_buf.append('>>>> patch ids')
-        for i in ids:
-            self.message_buf.append(i)
-        self.message_buf.append('<<<<')
+        [self.assertEqual(len(i), 1) for i in ids]
 
         commits = self.target.commits(filters=[pif])
         self.assertEqual(len(commits), 4)  # One less than all
+        ids = pif.get_results()
+        self.assertEqual(len(ids), 3)
+        self.assertEqual(len(ids[0]), 1)  # Patch-Id '373167d...' has no match
+        self.assertEqual(len(ids[1]), 2)  # Patch-Id '89958ac...' has a match "Add Jane's family name"
+
+        self.message_buf.append('>>>> patch ids')
+        for i in ids:
+            self.message_buf.append(i[0].patchid)
+            if len(i) > 1:
+                self.message_buf.append('-> ' + i[1])
+        self.message_buf.append('<<<<')
 
     def test_filter_patchid_repeat(self):
         commits = self.target.commits(rev='dev_b~3..dev_b')
