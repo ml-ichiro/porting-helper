@@ -113,14 +113,14 @@ class TestPortingHelper(TestCase):
 
     def test_filter_patchid(self):
         commits = self.target.commits(rev='dev_b~3..dev_b')
-        pif = PatchIdFilter(commits)
-        ids = pif.get_results()
+        f = PatchIdFilter(commits)
+        ids = f.get_results()
         self.assertEqual(len(ids), 3)
         [self.assertEqual(len(i), 1) for i in ids]
 
-        commits = self.target.commits(filters=[pif])
+        commits = self.target.commits(filters=[f])
         self.assertEqual(len(commits), 4)  # One less than all
-        ids = pif.get_results()
+        ids = f.get_results()
         self.assertEqual(len(ids), 3)
         self.assertEqual(len(ids[0]), 1)  # Patch-Id '373167d...' has no match
         self.assertEqual(len(ids[1]), 2)  # Patch-Id '89958ac...' has a match "Add Jane's family name"
@@ -134,15 +134,15 @@ class TestPortingHelper(TestCase):
 
     def test_filter_patchid_repeat(self):
         commits = self.target.commits(rev='dev_b~3..dev_b')
-        pif = PatchIdFilter(commits)
-        self.assertEqual(len(pif.get_results()), 3)
-        pif = PatchIdFilter(commits)
-        self.assertEqual(len(pif.get_results()), 3)
+        f = PatchIdFilter(commits)
+        self.assertEqual(len(f.get_results()), 3)
+        f = PatchIdFilter(commits)
+        self.assertEqual(len(f.get_results()), 3)
 
     def test_filter_summary(self):
         commits = self.target.commits(rev='dev_b~3..dev_b')
-        pif = SummaryFilter(commits)
-        ids = pif.get_results()
+        f = SummaryFilter(commits)
+        ids = f.get_results()
         self.assertEqual(len(ids), 3)
 
         self.message_buf.append('>>>> summary lines')
@@ -150,7 +150,7 @@ class TestPortingHelper(TestCase):
             self.message_buf.append(i)
         self.message_buf.append('<<<<')
 
-        commits = self.target.commits(filters=[pif])
+        commits = self.target.commits(filters=[f])
         self.assertEqual(len(commits), 4)  # One less than all
 
 # vim: set shiftwidth=4 tabstop=99 :
