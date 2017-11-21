@@ -21,8 +21,6 @@ __all__ = [
 
 
 class CommitWithId():
-    patchid = b''
-
     def __init__(self, commit):
         self.commit = commit
         self.patchid = self.set_patchid(commit.hexsha)
@@ -65,12 +63,14 @@ class RevertFilter(Filter):
     '''
     Find revert pairs
     '''
-    revert_list = []
-    revert_commit_expr = re.compile(
+    _REVERT_COMMIT_EXPR = re.compile(
             "This reverts\n? '?commit ([0-9a-f]*)", re.MULTILINE)
 
+    def __init__(self):
+        self.revert_list = []
+
     def get_reverted(self, message):
-        matched = self.revert_commit_expr.search(message)
+        matched = self._REVERT_COMMIT_EXPR.search(message)
 
         if (matched is None):
             return '--'
@@ -108,8 +108,6 @@ class PatchIdFilter(Filter):
     Drop commit of a series if the patch-id is found in
     a set of IDs created from another series
     '''
-    patchid_set = None
-    patchid_list = []
 
     def __init__(self, commits: List[CommitWithId]):
         '''
@@ -144,8 +142,6 @@ class SummaryFilter(Filter):
     Drop commit of a series if the sammary line is same as
     a commit in another series
     '''
-    summary_set = None
-    summary_list = []
 
     def __init__(self, commits: List[CommitWithId]):
         '''
@@ -179,7 +175,6 @@ class PortingHelper:
     '''
     Helper class to get filtered commit list from gitpython.Repo
     '''
-    repository = ''
 
     def __init__(self, repo: str = '.'):
         '''
