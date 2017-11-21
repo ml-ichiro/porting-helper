@@ -21,9 +21,14 @@ __all__ = [
 
 
 class CommitWithId():
+    PATCH_ID_EMPTY = '0' * 40
+
     def __init__(self, commit):
         self.commit = commit
-        self.patchid = self.set_patchid(commit.hexsha)
+        if commit.stats.total['files'] > 0:
+            self.patchid = self.set_patchid(commit.hexsha)
+        else:
+            self.patchid = CommitWithId.PATCH_ID_EMPTY
 
     def set_patchid(self, hexsha):
         command = 'git show ' + hexsha + '| git patch-id'
