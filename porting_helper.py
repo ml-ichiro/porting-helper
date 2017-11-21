@@ -72,7 +72,7 @@ class RevertFilter(Filter):
     def get_reverted(self, message):
         matched = self._REVERT_COMMIT_EXPR.search(message)
 
-        if (matched is None):
+        if matched is None:
             return '--'
 
         return matched.group(1)
@@ -82,12 +82,12 @@ class RevertFilter(Filter):
         :param commit: CommitWithId instance, almost same as gitpython's Commit
         :return: True (this filter doesn't drop any commit)
         '''
-        if (commit.summary.startswith('Revert "')):
+        if commit.summary.startswith('Revert "'):
             reverted = self.get_reverted(commit.message)
             self.revert_list.append([commit.hexsha, reverted, False])
 
         for r in self.revert_list:
-            if (commit.hexsha.startswith(r[1])):
+            if commit.hexsha.startswith(r[1]):
                 r[2] = True
                 break
 
@@ -121,7 +121,7 @@ class PatchIdFilter(Filter):
         :param commit: CommitWithId instance, almost same as gitpython's Commit
         :return: False if given patch-id is found in the set
         '''
-        if (commit.patchid in self.patchid_set):
+        if commit.patchid in self.patchid_set:
             for item in self.patchid_list:
                 if item[0].patchid == commit.patchid:
                     item.append(commit.hexsha)
@@ -155,7 +155,7 @@ class SummaryFilter(Filter):
         :param commit: CommitWithId instance, almost same as gitpython's Commit
         :return: False if given summary line is found in the set
         '''
-        if (commit.summary in self.summary_set):
+        if commit.summary in self.summary_set:
             for item in self.summary_list:
                 if item[0].summary == commit.summary:
                     item.append(commit.hexsha)
@@ -199,7 +199,7 @@ class PortingHelper:
         commit_list = []  # list of CommitWithId
 
         for c in self.repository.iter_commits(rev=rev, paths=paths):
-            if (len(c.parents) > 1):
+            if len(c.parents) > 1:
                 continue  # skip merge commits
 
             c_id = CommitWithId(c)
@@ -207,10 +207,10 @@ class PortingHelper:
             keep = True
             for f in filters:
                 keep &= f.action(c_id)
-                if (not keep):
+                if not keep:
                     break
 
-            if (keep):
+            if keep:
                 commit_list.append(c_id)
 
         return commit_list
@@ -227,7 +227,7 @@ class PortingHelper:
             except BadName as e:
                 continue
 
-            if (len(c.parents) > 1):
+            if len(c.parents) > 1:
                 continue
 
             c_id = CommitWithId(c)
