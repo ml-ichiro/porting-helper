@@ -137,7 +137,7 @@ class PatchIdFilter(Filter):
 
     def get_results(self):
         '''
-        :return: List of patch-ids
+        :return: List of list [ patch-id, matched commit-ids, ...]
         '''
         return self.patchid_list
 
@@ -171,7 +171,7 @@ class SummaryFilter(Filter):
 
     def get_results(self):
         '''
-        :return: List of summary lines
+        :return: List of list [ summary line, matched commit-ids, ...]
         '''
         return self.summary_list
 
