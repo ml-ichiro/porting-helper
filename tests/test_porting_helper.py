@@ -37,7 +37,7 @@ class TestPortingHelper(TestCase):
 
     def test_commits(self):
         commits = self.target.commits()
-        self.assertEqual(len(commits), 5)
+        self.assertEqual(len(commits), 9)
 
         self.message_buf.append('>>>> commits')
         for c in commits:
@@ -45,13 +45,13 @@ class TestPortingHelper(TestCase):
         self.message_buf.append('<<<<')
 
     def test_commits_repeat(self):
-        commits = self.target.commits()
+        commits = self.target.commits(rev='before_merge')
         self.assertEqual(len(commits), 5)
-        commits = self.target.commits()
+        commits = self.target.commits(rev='before_merge')
         self.assertEqual(len(commits), 5)
 
     def test_commits_partial(self):
-        commits = self.target.commits(rev='HEAD~2..HEAD')
+        commits = self.target.commits(rev='before_merge~2..before_merge')
         self.assertEqual(len(commits), 2)
 
     def test_commits_branch(self):
@@ -118,8 +118,8 @@ class TestPortingHelper(TestCase):
         self.assertEqual(len(ids), 3)
         [self.assertEqual(len(i), 1) for i in ids]
 
-        commits = self.target.commits(filters=[f])
-        self.assertEqual(len(commits), 4)  # One less than all
+        commits = self.target.commits(rev='before_merge', filters=[f])
+        self.assertEqual(len(commits), 4)
         ids = f.get_results()
         self.assertEqual(len(ids), 3)
         self.assertEqual(len(ids[0]), 1)  # Patch-Id '373167d...' has no match
@@ -129,7 +129,7 @@ class TestPortingHelper(TestCase):
         for i in ids:
             self.message_buf.append(i[0].patchid)
             if len(i) > 1:
-                self.message_buf.append('-> ' + i[1])
+                [ self.message_buf.append('-> ' + x) for x in i[1:] ]
         self.message_buf.append('<<<<')
 
     def test_filter_patchid_repeat(self):
@@ -146,8 +146,8 @@ class TestPortingHelper(TestCase):
         self.assertEqual(len(ids), 3)
         [self.assertEqual(len(i), 1) for i in ids]
 
-        commits = self.target.commits(filters=[f])
-        self.assertEqual(len(commits), 4)  # One less than all
+        commits = self.target.commits(rev='before_merge', filters=[f])
+        self.assertEqual(len(commits), 4)
         ids = f.get_results()
         self.assertEqual(len(ids), 3)
         self.assertEqual(len(ids[0]), 1)
@@ -157,7 +157,7 @@ class TestPortingHelper(TestCase):
         for i in ids:
             self.message_buf.append(i[0].summary)
             if len(i) > 1:
-                self.message_buf.append('-> ' + i[1])
+                [ self.message_buf.append('-> ' + x) for x in i[1:] ]
         self.message_buf.append('<<<<')
 
 # vim: set shiftwidth=4 tabstop=99 :
